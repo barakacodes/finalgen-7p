@@ -8,8 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Bot, Mail, Lock, ArrowLeft } from "lucide-react"
-import Link from "next/link"
+import { Mail, Lock, ArrowLeft } from "lucide-react"
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -56,7 +55,7 @@ export default function LoginPage() {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000))
-      window.location.href = "/dashboard"
+      alert("Login successful!")
     } catch (error) {
       console.error("Login failed:", error)
     } finally {
@@ -69,18 +68,25 @@ export default function LoginPage() {
       {/* Header */}
       <header className="container mx-auto px-6 py-4">
         <nav className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="p-2 bg-purple-600 rounded-lg">
-              <Bot className="h-8 w-8 text-white" />
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg">
+              <div className="relative">
+                <div className="w-8 h-8 flex items-center justify-center">
+                  <span className="text-white font-bold text-xl">X</span>
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full"></div>
+                </div>
+              </div>
             </div>
-            <span className="text-2xl font-bold text-white">Binance Bot</span>
-          </Link>
-          <Link href="/">
-            <Button variant="ghost" className="text-white hover:text-purple-300">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Home
-            </Button>
-          </Link>
+            <span className="text-2xl font-bold text-white">Crypto X</span>
+          </div>
+          <Button
+            variant="ghost"
+            className="text-white hover:text-purple-300"
+            onClick={() => alert("Navigate to Home")}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Home
+          </Button>
         </nav>
       </header>
 
@@ -89,7 +95,7 @@ export default function LoginPage() {
           <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl text-white">Welcome Back</CardTitle>
-              <CardDescription className="text-slate-300">Sign in to your Binance Bot account</CardDescription>
+              <CardDescription className="text-slate-300">Sign in to your Crypto X account</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -144,9 +150,7 @@ export default function LoginPage() {
                       Remember me
                     </Label>
                   </div>
-                  <Link href="/forgot-password" className="text-purple-400 hover:text-purple-300 text-sm">
-                    Forgot password?
-                  </Link>
+                  <button className="text-purple-400 hover:text-purple-300 text-sm">Forgot password?</button>
                 </div>
 
                 <Button
@@ -167,9 +171,12 @@ export default function LoginPage() {
                 <div className="text-center">
                   <p className="text-slate-400">
                     Don't have an account?{" "}
-                    <Link href="/signup" className="text-purple-400 hover:text-purple-300">
+                    <button
+                      className="text-purple-400 hover:text-purple-300"
+                      onClick={() => alert("Navigate to Signup")}
+                    >
                       Sign up
-                    </Link>
+                    </button>
                   </p>
                 </div>
               </form>

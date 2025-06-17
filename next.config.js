@@ -9,6 +9,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  swcMinify: false,
+  experimental: {},
 }
 
-export default nextConfig
+module.exports = nextConfig

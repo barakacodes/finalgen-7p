@@ -1,20 +1,25 @@
-import type { Metadata } from 'next'
-import './globals.css'
-
-export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
-}
+import type React from "react"
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Crypto X</title>
+      </head>
+      <body style={{ margin: 0, padding: 0, fontFamily: "Arial, sans-serif" }}>{children}</body>
     </html>
   )
 }
+
+
+import './globals.css'
+
+export const metadata = {
+      generator: 'v0.dev'
+    };

@@ -9,8 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { Bot, Mail, Lock, User, ArrowLeft, CheckCircle, Shield, Zap } from "lucide-react"
-import Link from "next/link"
+import { Mail, Lock, User, ArrowLeft, CheckCircle, Shield, Zap } from "lucide-react"
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -82,7 +81,7 @@ export default function SignupPage() {
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000))
       // Redirect to dashboard or verification page
-      window.location.href = "/dashboard"
+      alert("Account created successfully!")
     } catch (error) {
       console.error("Signup failed:", error)
     } finally {
@@ -104,18 +103,25 @@ export default function SignupPage() {
       {/* Header */}
       <header className="container mx-auto px-6 py-4">
         <nav className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="p-2 bg-purple-600 rounded-lg">
-              <Bot className="h-8 w-8 text-white" />
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg">
+              <div className="relative">
+                <div className="w-8 h-8 flex items-center justify-center">
+                  <span className="text-white font-bold text-xl">X</span>
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full"></div>
+                </div>
+              </div>
             </div>
-            <span className="text-2xl font-bold text-white">Binance Bot</span>
-          </Link>
-          <Link href="/">
-            <Button variant="ghost" className="text-white hover:text-purple-300">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Home
-            </Button>
-          </Link>
+            <span className="text-2xl font-bold text-white">Crypto X</span>
+          </div>
+          <Button
+            variant="ghost"
+            className="text-white hover:text-purple-300"
+            onClick={() => alert("Navigate to Home")}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Home
+          </Button>
         </nav>
       </header>
 
@@ -135,7 +141,7 @@ export default function SignupPage() {
                 </span>
               </h1>
               <p className="text-xl text-slate-300 mb-8">
-                Create your account and start earning with our advanced AI-powered trading bot.
+                Create your account and start earning with our advanced AI-powered trading platform.
               </p>
             </div>
 
@@ -283,13 +289,8 @@ export default function SignupPage() {
                       <div className="text-sm">
                         <Label htmlFor="agreeToTerms" className="text-slate-300 cursor-pointer">
                           I agree to the{" "}
-                          <Link href="/terms" className="text-purple-400 hover:text-purple-300">
-                            Terms of Service
-                          </Link>{" "}
-                          and{" "}
-                          <Link href="/privacy" className="text-purple-400 hover:text-purple-300">
-                            Privacy Policy
-                          </Link>
+                          <button className="text-purple-400 hover:text-purple-300">Terms of Service</button> and{" "}
+                          <button className="text-purple-400 hover:text-purple-300">Privacy Policy</button>
                         </Label>
                         {errors.agreeToTerms && <p className="text-red-400 text-sm mt-1">{errors.agreeToTerms}</p>}
                       </div>
@@ -328,9 +329,12 @@ export default function SignupPage() {
                   <div className="text-center">
                     <p className="text-slate-400">
                       Already have an account?{" "}
-                      <Link href="/login" className="text-purple-400 hover:text-purple-300">
+                      <button
+                        className="text-purple-400 hover:text-purple-300"
+                        onClick={() => alert("Navigate to Login")}
+                      >
                         Sign in
-                      </Link>
+                      </button>
                     </p>
                   </div>
                 </form>
