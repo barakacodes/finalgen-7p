@@ -91,7 +91,7 @@ export function MarketDataFeed({ userTier }: MarketDataFeedProps) {
   }
 
   const dataFeeds = [
-    { name: "Binance WebSocket", status: "connected", latency: 12, tier: "free" },
+    { name: "Binance WebSocket", status: "connected", latency: 12, tier: "free", primary: true },
     { name: "Coinbase Pro Feed", status: "connected", latency: 18, tier: "free" },
     { name: "Kraken WebSocket", status: "connected", latency: 25, tier: "pro" },
     { name: "FTX Real-time", status: "disconnected", latency: 0, tier: "pro" },
@@ -287,38 +287,42 @@ export function MarketDataFeed({ userTier }: MarketDataFeedProps) {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {dataFeeds.map((feed, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 bg-slate-700 rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <div
-                          className={`w-3 h-3 rounded-full ${
-                            feed.status === "connected" ? "bg-green-400" : "bg-red-400"
-                          }`}
-                        />
-                        <div>
-                          <div className="font-medium text-white">{feed.name}</div>
-                          <div className="text-sm text-slate-400">
-                            {feed.status === "connected" ? `${feed.latency}ms latency` : "Disconnected"}
+                  {dataFeeds
+                    .sort((a, b) => (a.primary ? -1 : b.primary ? 1 : 0))
+                    .map((feed, index) => (
+                      <div key={index} className="flex items-center justify-between p-4 bg-slate-700 rounded-lg">
+                        <div className="flex items-center gap-4">
+                          <div
+                            className={`w-3 h-3 rounded-full ${
+                              feed.status === "connected" ? "bg-green-400" : "bg-red-400"
+                            }`}
+                          />
+                          <div>
+                            <div className="font-medium text-white">
+                              {feed.name} {feed.primary && <Badge className="ml-2">Primary</Badge>}
+                            </div>
+                            <div className="text-sm text-slate-400">
+                              {feed.status === "connected" ? `${feed.latency}ms latency` : "Disconnected"}
+                            </div>
                           </div>
                         </div>
+                        <div className="flex items-center gap-3">
+                          <Badge
+                            variant={feed.tier === "free" ? "outline" : feed.tier === "pro" ? "secondary" : "default"}
+                          >
+                            {feed.tier.toUpperCase()}
+                          </Badge>
+                          {(feed.tier === "pro" && userTier === "free") ||
+                          (feed.tier === "enterprise" && userTier !== "enterprise") ? (
+                            <Button size="sm" variant="outline" disabled>
+                              Upgrade Required
+                            </Button>
+                          ) : (
+                            <Switch checked={feed.status === "connected"} disabled={feed.name === "FTX Real-time"} />
+                          )}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <Badge
-                          variant={feed.tier === "free" ? "outline" : feed.tier === "pro" ? "secondary" : "default"}
-                        >
-                          {feed.tier.toUpperCase()}
-                        </Badge>
-                        {(feed.tier === "pro" && userTier === "free") ||
-                        (feed.tier === "enterprise" && userTier !== "enterprise") ? (
-                          <Button size="sm" variant="outline" disabled>
-                            Upgrade Required
-                          </Button>
-                        ) : (
-                          <Switch checked={feed.status === "connected"} disabled={feed.name === "FTX Real-time"} />
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </CardContent>
             </Card>

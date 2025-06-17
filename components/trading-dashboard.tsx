@@ -59,7 +59,7 @@ export function TradingDashboard({ userTier }: TradingDashboardProps) {
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Activity className="h-5 w-5" />
-            Trading Controls
+            Binance Bot Trading Controls
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">

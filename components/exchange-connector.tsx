@@ -94,6 +94,13 @@ export function ExchangeConnector({ userTier }: ExchangeConnectorProps) {
     setConnectedExchanges(connectedExchanges.filter((id) => id !== exchangeId))
   }
 
+  // Move Binance to the top of the exchanges array
+  const binanceIndex = exchanges.findIndex((exchange) => exchange.id === "binance")
+  if (binanceIndex > 0) {
+    const binance = exchanges.splice(binanceIndex, 1)[0]
+    exchanges.unshift(binance)
+  }
+
   return (
     <div className="space-y-6">
       <Tabs defaultValue="exchanges" className="space-y-6">
