@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Bot, TrendingUp, Shield, Zap, Users, Star, ArrowRight, CheckCircle } from "lucide-react"
+import Link from "next/link"
 
 export default function HomePage() {
   const [email, setEmail] = useState("")
@@ -73,10 +74,14 @@ export default function HomePage() {
             <span className="text-2xl font-bold text-white">Binance Bot</span>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" className="text-white hover:text-purple-300">
-              Login
-            </Button>
-            <Button className="bg-purple-600 hover:bg-purple-700">Get Started</Button>
+            <Link href="/login">
+              <Button variant="ghost" className="text-white hover:text-purple-300">
+                Login
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button className="bg-purple-600 hover:bg-purple-700">Get Started</Button>
+            </Link>
           </div>
         </nav>
       </header>
@@ -107,10 +112,12 @@ export default function HomePage() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-80 bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
               />
-              <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
-                Start Trading
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              <Link href="/signup">
+                <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
+                  Start Trading
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -200,10 +207,12 @@ export default function HomePage() {
               Join thousands of successful traders who are already using our platform to generate passive income.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-white text-purple-600 hover:bg-slate-100">
-                Start Free Trial
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              <Link href="/signup">
+                <Button size="lg" className="bg-white text-purple-600 hover:bg-slate-100">
+                  Start Free Trial
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
                 View Pricing
               </Button>
@@ -229,13 +238,19 @@ export default function HomePage() {
             <h3 className="font-semibold text-white mb-4">Product</h3>
             <ul className="space-y-2 text-slate-400">
               <li>
-                <button className="hover:text-white text-left">Features</button>
+                <a href="#" className="hover:text-white">
+                  Features
+                </a>
               </li>
               <li>
-                <button className="hover:text-white text-left">Pricing</button>
+                <a href="#" className="hover:text-white">
+                  Pricing
+                </a>
               </li>
               <li>
-                <button className="hover:text-white text-left">API</button>
+                <a href="#" className="hover:text-white">
+                  API
+                </a>
               </li>
             </ul>
           </div>
@@ -244,13 +259,19 @@ export default function HomePage() {
             <h3 className="font-semibold text-white mb-4">Support</h3>
             <ul className="space-y-2 text-slate-400">
               <li>
-                <button className="hover:text-white text-left">Documentation</button>
+                <a href="#" className="hover:text-white">
+                  Documentation
+                </a>
               </li>
               <li>
-                <button className="hover:text-white text-left">Help Center</button>
+                <a href="#" className="hover:text-white">
+                  Help Center
+                </a>
               </li>
               <li>
-                <button className="hover:text-white text-left">Contact</button>
+                <a href="#" className="hover:text-white">
+                  Contact
+                </a>
               </li>
             </ul>
           </div>
@@ -259,13 +280,19 @@ export default function HomePage() {
             <h3 className="font-semibold text-white mb-4">Company</h3>
             <ul className="space-y-2 text-slate-400">
               <li>
-                <button className="hover:text-white text-left">About</button>
+                <a href="#" className="hover:text-white">
+                  About
+                </a>
               </li>
               <li>
-                <button className="hover:text-white text-left">Blog</button>
+                <a href="#" className="hover:text-white">
+                  Blog
+                </a>
               </li>
               <li>
-                <button className="hover:text-white text-left">Careers</button>
+                <a href="#" className="hover:text-white">
+                  Careers
+                </a>
               </li>
             </ul>
           </div>
