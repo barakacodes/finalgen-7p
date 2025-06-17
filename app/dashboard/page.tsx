@@ -10,7 +10,7 @@ import { StrategyBuilder } from "@/components/strategy-builder"
 import { SubscriptionPlans } from "@/components/subscription-plans"
 import { ExchangeConnector } from "@/components/exchange-connector"
 import { MarketDataFeed } from "@/components/market-data-feed"
-import { Crown } from "lucide-react"
+import { Bot, Crown } from "lucide-react"
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("dashboard")
@@ -22,17 +22,12 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg">
-              <div className="relative">
-                <div className="w-8 h-8 flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">X</span>
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full"></div>
-                </div>
-              </div>
+            <div className="p-2 bg-purple-600 rounded-lg">
+              <Bot className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">Crypto X Pro</h1>
-              <p className="text-purple-200">Advanced Cryptocurrency Trading Platform</p>
+              <h1 className="text-3xl font-bold text-white">Binance Bot Pro</h1>
+              <p className="text-purple-200">Advanced Binance Trading Bot</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
