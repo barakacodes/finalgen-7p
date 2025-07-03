@@ -10,6 +10,7 @@ import { StrategyBuilder } from "@/components/strategy-builder"
 import { SubscriptionPlans } from "@/components/subscription-plans"
 import { ExchangeConnector } from "@/components/exchange-connector"
 import { MarketDataFeed } from "@/components/market-data-feed"
+import TradingEngine from "@/components/trading-engine"
 import { Bot, Crown } from "lucide-react"
 
 export default function DashboardPage() {
@@ -43,7 +44,7 @@ export default function DashboardPage() {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 bg-slate-800 border-slate-700">
+          <TabsList className="grid w-full grid-cols-7 bg-slate-800 border-slate-700">
             <TabsTrigger value="dashboard" className="data-[state=active]:bg-purple-600">
               Dashboard
             </TabsTrigger>
@@ -58,6 +59,9 @@ export default function DashboardPage() {
             </TabsTrigger>
             <TabsTrigger value="market-data" className="data-[state=active]:bg-purple-600">
               Market Data
+            </TabsTrigger>
+            <TabsTrigger value="trading-engine" className="data-[state=active]:bg-purple-600">
+              Trading Engine
             </TabsTrigger>
             <TabsTrigger value="subscription" className="data-[state=active]:bg-purple-600">
               Subscription
@@ -82,6 +86,10 @@ export default function DashboardPage() {
 
           <TabsContent value="market-data">
             <MarketDataFeed userTier={userTier} />
+          </TabsContent>
+
+          <TabsContent value="trading-engine">
+            <TradingEngine />
           </TabsContent>
 
           <TabsContent value="subscription">
