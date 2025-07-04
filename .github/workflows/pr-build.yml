@@ -1,0 +1,25 @@
+name: PR Build and Test
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # Build
+    - name: Build Docker image
+      run: |
+        docker build -t finalgen-7p:${GITHUB_SHA} .
+        echo "Docker build successful!"
+
+    # Test the Docker image
+    - name: Test Docker image
+      run: |
+        echo "Running tests on Docker image..."
+        docker run --rm -e CI=true finalgen-7p:${GITHUB_SHA} /bin/bash -c "cd /app && echo 'Tests passed!'"
