@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -11,6 +11,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { Brain, Code, Play, Settings, Copy, Trash2 } from "lucide-react"
+import StrategyBuilderForm from "@/components/strategy-builder-form"
+import StrategyBacktest from "@/components/strategy-backtest"
+import { getStrategies, deleteStrategy } from "@/lib/api"
+import { toast } from "sonner"
 
 interface StrategyBuilderProps {
   userTier: string
@@ -19,6 +23,64 @@ interface StrategyBuilderProps {
 export function StrategyBuilder({ userTier }: StrategyBuilderProps) {
   const [selectedStrategy, setSelectedStrategy] = useState("")
   const [isBacktesting, setIsBacktesting] = useState(false)
+  const [userStrategies, setUserStrategies] = useState<any[]>([])
+  const [showStrategyForm, setShowStrategyForm] = useState(false)
+  const [editingStrategy, setEditingStrategy] = useState<any>(null)
+  const [activeTab, setActiveTab] = useState("marketplace")
+
+  // Fetch user strategies
+  useEffect(() => {
+    const fetchStrategies = async () => {
+      try {
+        const strategies = await getStrategies()
+        setUserStrategies(strategies)
+      } catch (error) {
+        console.error('Error fetching strategies:', error)
+      }
+    }
+    
+    fetchStrategies()
+  }, [])
+
+  const handleCreateStrategy = () => {
+    setEditingStrategy(null)
+    setShowStrategyForm(true)
+    setActiveTab("builder")
+  }
+
+  const handleEditStrategy = (strategy: any) => {
+    setEditingStrategy(strategy)
+    setShowStrategyForm(true)
+    setActiveTab("builder")
+  }
+
+  const handleDeleteStrategy = async (id: string) => {
+    if (confirm('Are you sure you want to delete this strategy?')) {
+      try {
+        await deleteStrategy(id)
+        setUserStrategies(userStrategies.filter(s => s.id !== id))
+        toast.success('Strategy deleted successfully')
+      } catch (error) {
+        toast.error('Failed to delete strategy')
+        console.error('Error deleting strategy:', error)
+      }
+    }
+  }
+
+  const handleSaveStrategy = (strategy: any) => {
+    if (strategy) {
+      // Update the list of strategies
+      if (editingStrategy) {
+        setUserStrategies(userStrategies.map(s => s.id === strategy.id ? strategy : s))
+      } else {
+        setUserStrategies([...userStrategies, strategy])
+      }
+    }
+    
+    setShowStrategyForm(false)
+    setEditingStrategy(null)
+    setActiveTab("my-strategies")
+  }
 
   const predefinedStrategies = [
     {
@@ -72,15 +134,9 @@ export function StrategyBuilder({ userTier }: StrategyBuilderProps) {
     { date: "2024-06", value: 10650, benchmark: 10300 },
   ]
 
-  const userStrategies = [
-    { name: "My RSI Strategy", status: "active", pnl: 245.5, created: "2024-01-15" },
-    { name: "Custom MACD", status: "paused", pnl: -89.2, created: "2024-01-10" },
-    { name: "Bollinger Test", status: "backtesting", pnl: 0, created: "2024-01-20" },
-  ]
-
   return (
     <div className="space-y-6">
-      <Tabs defaultValue="marketplace" className="space-y-6">
+      <Tabs defaultValue="marketplace" value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-4 bg-slate-800 border-slate-700">
           <TabsTrigger value="marketplace" className="data-[state=active]:bg-purple-600">
             Strategy Marketplace
@@ -143,184 +199,79 @@ export function StrategyBuilder({ userTier }: StrategyBuilderProps) {
         </TabsContent>
 
         <TabsContent value="builder">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="bg-slate-800 border-slate-700">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Brain className="h-5 w-5" />
-                  Strategy Configuration
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label className="text-white">Strategy Name</Label>
-                  <Input placeholder="My Custom Strategy" className="mt-2 bg-slate-700 border-slate-600 text-white" />
-                </div>
-
-                <div>
-                  <Label className="text-white">Base Strategy</Label>
-                  <Select>
-                    <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white">
-                      <SelectValue placeholder="Select base strategy" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="rsi">RSI Mean Reversion</SelectItem>
-                      <SelectItem value="macd">MACD Momentum</SelectItem>
-                      <SelectItem value="bb">Bollinger Bands</SelectItem>
-                      <SelectItem value="custom">Custom (Code)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-white">RSI Period</Label>
-                    <Input type="number" defaultValue="14" className="mt-2 bg-slate-700 border-slate-600 text-white" />
+          {showStrategyForm ? (
+            <StrategyBuilderForm 
+              existingStrategy={editingStrategy} 
+              onSave={handleSaveStrategy} 
+            />
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="bg-slate-800 border-slate-700">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Brain className="h-5 w-5" />
+                    Strategy Configuration
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="text-center py-8">
+                    <h3 className="text-xl font-medium text-white mb-4">Create a New Trading Strategy</h3>
+                    <p className="text-slate-400 mb-6">
+                      Configure your trading strategy parameters and test it with historical data
+                    </p>
+                    <Button onClick={handleCreateStrategy} className="mx-auto">
+                      <Brain className="h-4 w-4 mr-2" />
+                      Create New Strategy
+                    </Button>
                   </div>
-                  <div>
-                    <Label className="text-white">RSI Threshold</Label>
-                    <Input type="number" defaultValue="30" className="mt-2 bg-slate-700 border-slate-600 text-white" />
-                  </div>
-                </div>
+                </CardContent>
+              </Card>
 
-                <div>
-                  <Label className="text-white">Risk Management</Label>
-                  <div className="mt-2 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-400">Stop Loss (%)</span>
-                      <Input type="number" defaultValue="5" className="w-20 bg-slate-700 border-slate-600 text-white" />
+              <Card className="bg-slate-800 border-slate-700">
+                <CardHeader>
+                  <CardTitle className="text-white">Strategy Types</CardTitle>
+                  <CardDescription className="text-slate-400">
+                    Choose from different strategy types
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="p-4 border border-slate-700 rounded-lg">
+                      <h4 className="font-medium text-white">Momentum</h4>
+                      <p className="text-sm text-slate-400 mt-1">
+                        Follows market trends by buying assets that have been rising and selling those that have been falling.
+                      </p>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-400">Take Profit (%)</span>
-                      <Input
-                        type="number"
-                        defaultValue="10"
-                        className="w-20 bg-slate-700 border-slate-600 text-white"
-                      />
+                    
+                    <div className="p-4 border border-slate-700 rounded-lg">
+                      <h4 className="font-medium text-white">Mean Reversion</h4>
+                      <p className="text-sm text-slate-400 mt-1">
+                        Assumes that prices will revert to their historical average over time.
+                      </p>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-400">Position Size (%)</span>
-                      <Input
-                        type="number"
-                        defaultValue="25"
-                        className="w-20 bg-slate-700 border-slate-600 text-white"
-                      />
+                    
+                    <div className="p-4 border border-slate-700 rounded-lg">
+                      <h4 className="font-medium text-white">Breakout</h4>
+                      <p className="text-sm text-slate-400 mt-1">
+                        Identifies when price breaks through support or resistance levels.
+                      </p>
+                    </div>
+                    
+                    <div className="p-4 border border-slate-700 rounded-lg">
+                      <h4 className="font-medium text-white">Trend Following</h4>
+                      <p className="text-sm text-slate-400 mt-1">
+                        Uses moving averages to identify and follow market trends.
+                      </p>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-slate-800 border-slate-700">
-              <CardHeader>
-                <CardTitle className="text-white">Custom Code</CardTitle>
-                <CardDescription className="text-slate-400">
-                  Advanced users can write custom trading logic
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Textarea
-                  placeholder={`// Custom strategy code
-function onTick(data) {
-  const rsi = calculateRSI(data.prices, 14);
-  
-  if (rsi < 30 && !hasPosition()) {
-    buy(data.symbol, 0.1);
-  } else if (rsi > 70 && hasPosition()) {
-    sell(data.symbol, getPosition().size);
-  }
-}`}
-                  className="min-h-[300px] bg-slate-700 border-slate-600 text-white font-mono text-sm"
-                  disabled={userTier === "free"}
-                />
-                {userTier === "free" && (
-                  <div className="mt-2 text-sm text-slate-400">Custom code editing requires PRO subscription</div>
-                )}
-                <div className="flex gap-2 mt-4">
-                  <Button className="flex-1">Save Strategy</Button>
-                  <Button variant="outline">Test Syntax</Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="backtest">
-          <div className="space-y-6">
-            <Card className="bg-slate-800 border-slate-700">
-              <CardHeader>
-                <CardTitle className="text-white">Backtest Configuration</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div>
-                    <Label className="text-white">Strategy</Label>
-                    <Select>
-                      <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white">
-                        <SelectValue placeholder="Select strategy" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="rsi">RSI Mean Reversion</SelectItem>
-                        <SelectItem value="macd">MACD Momentum</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label className="text-white">Start Date</Label>
-                    <Input
-                      type="date"
-                      defaultValue="2024-01-01"
-                      className="mt-2 bg-slate-700 border-slate-600 text-white"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-white">End Date</Label>
-                    <Input
-                      type="date"
-                      defaultValue="2024-06-30"
-                      className="mt-2 bg-slate-700 border-slate-600 text-white"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-white">Initial Capital</Label>
-                    <Input
-                      type="number"
-                      defaultValue="10000"
-                      className="mt-2 bg-slate-700 border-slate-600 text-white"
-                    />
-                  </div>
-                </div>
-                <Button className="mt-4" disabled={isBacktesting}>
-                  {isBacktesting ? "Running Backtest..." : "Start Backtest"}
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-slate-800 border-slate-700">
-              <CardHeader>
-                <CardTitle className="text-white">Backtest Results</CardTitle>
-                <CardDescription className="text-slate-400">Strategy performance vs benchmark</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={400}>
-                  <LineChart data={backtestData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                    <XAxis dataKey="date" stroke="#9CA3AF" />
-                    <YAxis stroke="#9CA3AF" />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "#1F2937",
-                        border: "1px solid #374151",
-                        borderRadius: "8px",
-                      }}
-                    />
-                    <Line type="monotone" dataKey="value" stroke="#8B5CF6" name="Strategy" strokeWidth={2} />
-                    <Line type="monotone" dataKey="benchmark" stroke="#06B6D4" name="Benchmark" strokeWidth={2} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
+          <StrategyBacktest />
         </TabsContent>
 
         <TabsContent value="my-strategies">

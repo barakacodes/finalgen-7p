@@ -1,0 +1,8 @@
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, sessions, trading_api
+Running migrations:
+  No migrations to apply.
+2025-07-03 12:06:52,694 INFO     Starting server at tcp:port=12001:interface=0.0.0.0
+2025-07-03 12:06:52,694 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+2025-07-03 12:06:52,695 INFO     Configuring endpoint tcp:port=12001:interface=0.0.0.0
+2025-07-03 12:06:52,695 INFO     Listening on TCP address 0.0.0.0:12001

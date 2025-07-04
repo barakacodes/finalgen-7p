@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tke-test
+  labels:
+    app: finalgen-7p
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: finalgen-7p
+  template:
+    metadata:
+      labels:
+        app: finalgen-7p
+    spec:
+      containers:
+      - name: finalgen-7p
+        image: ccr.ccs.tencentyun.com/demo/mywebapp:latest
+        ports:
+        - containerPort: 3000
+          name: frontend
+        - containerPort: 8000
+          name: backend
+        env:
+        - name: NODE_ENV
+          value: "production"
